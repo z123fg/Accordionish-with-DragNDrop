@@ -57,10 +57,7 @@ const DragNDrop = ({ children }) => {
       document.defaultView.getComputedStyle(ele, "").getPropertyValue(style)
     );
   };
-  /* useEffect(() => {
-                      console.log('updateDimensions')
-                      dimensionsRef.current={...dimensionsRef.current,...getDimensions()}
-                  }, [childrenState]) */
+  
   const onTranslate = (draggable, x, y) => {
     draggable.style.transform = `translate(${x}px,${y}px)`;
   };
