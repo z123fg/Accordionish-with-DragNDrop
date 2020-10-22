@@ -66,7 +66,7 @@ const DragNDrop = ({ children }) => {
   };
   const handlersRef = useRef({
     onMouseDown: (ee) => {
-      //console.log(ee.touches[0].offsetY)
+      console.log(dragElRef.current,insertRef.current)
       if (ee.touches)
         childrenRef.current.forEach((e, i) => {
           e.current.removeEventListener(
@@ -104,7 +104,7 @@ const DragNDrop = ({ children }) => {
       }
     },
     onLongPress: (ee) => {
-      if (dragElRef.current == null && insertRef.current == null) return;
+      if (dragElRef.current == null || insertRef.current == null||dragRef.current) return;
 
       getDimensions();
       childrenRef.current.forEach((e, i) => {
@@ -139,7 +139,6 @@ const DragNDrop = ({ children }) => {
     onMouseLeave: (i) => {},
     onMouseMove: (ee) => {
       ee.preventDefault();
-      console.log(containerRef.current.getBoundingClientRect().top);
       edgeDetector(
         ee.clientX || ee.touches[0].clientX,
         ee.clientY || ee.touches[0].clientY
@@ -173,6 +172,7 @@ const DragNDrop = ({ children }) => {
           },
         });
         if (lastMouseRef.current !== firstDragRef.current) {
+
           onDrop();
         } else {
           dragElRef.current = null;
@@ -184,6 +184,7 @@ const DragNDrop = ({ children }) => {
         rerenderChildren({ onClick: null });
         dragElRef.current = null;
         insertRef.current = null;
+        dragRef.current = false
       }
 
       /* childrenRef.current.forEach((e) => {
@@ -245,6 +246,7 @@ const DragNDrop = ({ children }) => {
         insertRef.current = dragElRef.current;
         dragElRef.current = null;
         insertRef.current = null;
+        dragRef.current=false
       }
     },
     onClick: (e) => {},
