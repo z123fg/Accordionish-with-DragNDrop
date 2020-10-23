@@ -87,7 +87,6 @@ function App() {
           </AccordionishDetails>
         </Accordionish>
       </DragNDrop>
-      
     </div>
   );
 }
