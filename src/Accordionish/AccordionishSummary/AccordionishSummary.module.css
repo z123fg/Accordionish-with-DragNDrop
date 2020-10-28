@@ -1,0 +1,57 @@
+.root {
+    width: 50%;
+    height: 500px;
+    border: 1px solid red;
+  }
+  
+  .typography {
+    font-size: 0.9375rem;
+    font-weight: 400;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+  
+    margin: 0;
+  }
+  
+  .AcdSummary_root:hover:not(.disabled) {
+    
+    cursor: pointer;
+  }
+  
+  .AcdSummary_root.expanded {
+    min-height: 64px;
+  }
+  
+  .AcdSummary_root {
+    display: flex;
+    padding: 0px 16px;
+    min-height: 48px;
+    transition: min-height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    color: inherit;
+    border: 0;
+    margin: 0;
+    outline: 0;
+    position: relative;
+    align-items: center;
+    user-select: none;
+    border-radius: 0;
+    vertical-align: middle;
+    justify-content: center;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .AcdSummary_content {
+    margin: 12px 0;
+    display: flex;
+    flex-grow: 1;
+    transition: margin 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+  
+  .AcdSummary_content.expanded {
+    margin: 20px 0;
+  }
+  
