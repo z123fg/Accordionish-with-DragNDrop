@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-chromatic:https://www.chromatic.com/library?appId=5fb8638d810b370021e6138d&groupPrefix=Example
+chromatic: https://www.chromatic.com/library?appId=5fb8638d810b370021e6138d&groupPrefix=Example
 
 See Example Here: http://accordionish-react.s3-website-us-east-1.amazonaws.com/
 
