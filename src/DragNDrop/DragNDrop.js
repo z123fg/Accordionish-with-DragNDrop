@@ -17,6 +17,7 @@ const DragNDrop = ({ children }) => {
     shouldPreventDefault: true,
     delay: 500,
   };
+  const overallTransitionRef = useRef(0)
   const firstDragRef = useRef(null);
   const totalTransitionRef = useRef(0);
   const lastTransitionRef = useRef(0);
@@ -57,16 +58,15 @@ const DragNDrop = ({ children }) => {
       document.defaultView.getComputedStyle(ele, "").getPropertyValue(style)
     );
   };
-  /* useEffect(() => {
-                      console.log('updateDimensions')
-                      dimensionsRef.current={...dimensionsRef.current,...getDimensions()}
-                  }, [childrenState]) */
+  
   const onTranslate = (draggable, x, y) => {
+   // console.log(totalTransitionRef.current)
+    //console.log(childrenRef.current.map(e=>e.current).indexOf(draggable),y)
     draggable.style.transform = `translate(${x}px,${y}px)`;
   };
   const handlersRef = useRef({
     onMouseDown: (ee) => {
-      //console.log(ee.touches[0].offsetY)
+      console.log(dragElRef.current,insertRef.current)
       if (ee.touches)
         childrenRef.current.forEach((e, i) => {
           e.current.removeEventListener(
@@ -104,7 +104,7 @@ const DragNDrop = ({ children }) => {
       }
     },
     onLongPress: (ee) => {
-      if (dragElRef.current == null && insertRef.current == null) return;
+      if (dragElRef.current == null || insertRef.current == null||dragRef.current) return;
 
       getDimensions();
       childrenRef.current.forEach((e, i) => {
@@ -138,8 +138,12 @@ const DragNDrop = ({ children }) => {
     onMouseOver: (ee, i) => {},
     onMouseLeave: (i) => {},
     onMouseMove: (ee) => {
-      ee.preventDefault();
-      console.log(containerRef.current.getBoundingClientRect().top);
+      
+      
+      if (ee.cancelable) {
+        ee.preventDefault();
+        ee.preventDefault();
+     }
       edgeDetector(
         ee.clientX || ee.touches[0].clientX,
         ee.clientY || ee.touches[0].clientY
@@ -154,11 +158,13 @@ const DragNDrop = ({ children }) => {
     },
     onMouseUp: (ee) => {
       if (dragElRef.current == null && insertRef.current == null) return;
+       let draggable = childrenRef.current[dragElRef.current].current;
+      draggable.classList.add(classes.dropdrop);
       document.removeEventListener('mouseup',handlersRef.current.onMouseUp);
       document.removeEventListener('touchend', handlersRef.current.onMouseUp)
       childrenRef.current[dragElRef.current].current.style.zIndex = "";
-      let draggable = childrenRef.current[dragElRef.current].current;
-      draggable.classList.add(classes.dropdrop);
+     
+      
 
       if (dragRef.current) {
         childrenRef.current[dragElRef.current].current.classList.remove(
@@ -173,6 +179,7 @@ const DragNDrop = ({ children }) => {
           },
         });
         if (lastMouseRef.current !== firstDragRef.current) {
+
           onDrop();
         } else {
           dragElRef.current = null;
@@ -184,6 +191,7 @@ const DragNDrop = ({ children }) => {
         rerenderChildren({ onClick: null });
         dragElRef.current = null;
         insertRef.current = null;
+        dragRef.current = false
       }
 
       /* childrenRef.current.forEach((e) => {
@@ -212,15 +220,21 @@ const DragNDrop = ({ children }) => {
 
       console.log("reset");
     },
-    onTransitionStart: () => {
-      console.log("transitionStart");
+    onTransitionStart: (ee) => {
+      
       totalTransitionRef.current = totalTransitionRef.current + 1;
+      
     },
-    onTransitionEnd: () => {
-      console.log("transitionEnd");
+  
+    onTransitionRun:(ee)=>{
+      ee.preventDefault();
+    },
+    onTransitionCancel:(ee)=>{
+      totalTransitionRef.current=0;
+    },
+    onTransitionEnd: (ee) => {
 
       lastTransitionRef.current = lastTransitionRef.current + 1;
-      console.log(totalTransitionRef.current, lastTransitionRef.current);
       if (lastTransitionRef.current >= totalTransitionRef.current) {
         dragRef.current = false;
         lastTransitionRef.current = 0;
@@ -232,6 +246,11 @@ const DragNDrop = ({ children }) => {
             "transitionend",
             handlersRef.current.onTransitionEnd
           );
+          e.current.removeEventListener(
+            "transitioncancel",
+            handlersRef.current.onTransitionCancel
+          );
+          e.current.removeEventListener('transitionrun',handlersRef.current.onTransitionRun);
           e.current.removeEventListener(
             "transitionstart",
             handlersRef.current.onTransitionStart
@@ -245,6 +264,7 @@ const DragNDrop = ({ children }) => {
         insertRef.current = dragElRef.current;
         dragElRef.current = null;
         insertRef.current = null;
+        dragRef.current=false
       }
     },
     onClick: (e) => {},
@@ -320,19 +340,24 @@ const DragNDrop = ({ children }) => {
     }
 
     childrenRef.current.forEach((e, i) => {
-      e.current.addEventListener(
-        "transitionend",
-        handlersRef.current.onTransitionEnd
-      );
+      
       e.current.addEventListener(
         "transitionstart",
         handlersRef.current.onTransitionStart
       );
-    });
-
-    childrenRef.current.forEach((e, i) => {
+      e.current.addEventListener('transitionrun',handlersRef.current.onTransitionRun);
+      e.current.addEventListener(
+        "transitioncancel",
+        handlersRef.current.onTransitionCancel
+      );
       onTranslate(e.current, 0, translateRef.current[i]);
+      e.current.addEventListener(
+        "transitionend",
+        handlersRef.current.onTransitionEnd
+      );
     });
+    console.log(translateRef.current)
+    
   };
 
   const rerenderChildren = (props, dragIndex, insertIndex) => {
@@ -532,11 +557,11 @@ const DragNDrop = ({ children }) => {
 
   const refHandler = (ele, i) => {
     if (!ele) return;
-    console.log("refAssign");
-    ele.removeEventListener(
+    //console.log("refAssign");
+    /* ele.removeEventListener(
       "transitionend",
       handlersRef.current.onTransitionEnd
-    );
+    ); */
 
     ele.classList.remove("dropdrop");
     childrenRef.current[i].current = ele;
